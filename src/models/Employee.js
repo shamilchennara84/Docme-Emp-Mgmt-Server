@@ -11,8 +11,8 @@ const EmployeeSchema = new Schema({
     required: true,
   },
   designation: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Designation",
   },
   phone: {
     type: String,
@@ -37,8 +37,8 @@ const EmployeeSchema = new Schema({
     required: true,
   },
   location: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Location",
   },
 });
 const Employee = mongoose.model("Employee", EmployeeSchema);
