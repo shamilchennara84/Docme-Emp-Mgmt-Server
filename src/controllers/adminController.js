@@ -118,6 +118,10 @@ exports.listEmployees = async (req, res) => {
   }
 };
 
+// =====================================================
+
+// get employee by id
+
 exports.getEmployeeById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -202,9 +206,13 @@ exports.getEmployeeById = async (req, res) => {
   }
 };
 
+// =====================================================
+
+// update employee by id
+
 exports.updateEmployee = async (req, res) => {
   const { id } = req.params;
-  console.log(req.body,"body");
+  console.log(req.body, "body");
   const { location, designation, ...otherUpdates } = req.body;
 
   const locationData = await Location.findOne({ city: location });
@@ -215,7 +223,7 @@ exports.updateEmployee = async (req, res) => {
     });
   }
 
-console.log(location);
+  console.log(location);
   const designationData = await Designation.findOne({ title: designation });
   if (!designation) {
     return res.status(404).json({
@@ -252,6 +260,94 @@ console.log(location);
     res.status(500).json({
       success: false,
       message: "An error occurred while updating the employee",
+    });
+  }
+};
+
+// =====================================================
+
+// delete employee by id
+
+exports.deleteEmployee = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedEmployee = await Employee.findByIdAndDelete(id);
+    if (!deletedEmployee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Employee deleted successfully",
+      data: deletedEmployee,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while deleting the employee",
+    });
+  }
+};
+
+// =====================================================
+
+// create Emplloyee
+
+exports.createEmployee = async (req, res) => {
+  try {
+    const { location, designation, ...otherUpdates } = req.body;
+
+    const existingEmployee = await Employee.findOne({
+      employeeId: otherUpdates.employeeId,
+    });
+    if (existingEmployee) {
+      return res.status(400).json({
+        success: false,
+        message: "Employee ID already exists",
+      });
+    }
+
+    const locationData = await Location.findOne({ city: location });
+    if (!locationData) {
+      return res.status(404).json({
+        success: false,
+        message: "Location not found",
+      });
+    }
+
+    const designationData = await Designation.findOne({ title: designation });
+    if (!designationData) {
+      return res.status(404).json({
+        success: false,
+        message: "Designation not found",
+      });
+    }
+
+    const updates = {
+      ...otherUpdates,
+      location: locationData._id,
+      designation: designationData._id,
+    };
+
+    const newEmployee = new Employee(updates);
+
+    const savedEmployee = await newEmployee.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Employee created successfully",
+      data: savedEmployee,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while creating the employee",
     });
   }
 };
