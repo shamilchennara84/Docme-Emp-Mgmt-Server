@@ -1,5 +1,5 @@
 const express = require("express");
-const connectMongo = require("./config/mongoDB");
+const connectMongo = require("./config/mongoDb");
 const adminRoutes = require("./routes/adminRoutes");
 const employeeRoutes = require("./routes/employeeRoutes");
 const morgan = require("morgan");
