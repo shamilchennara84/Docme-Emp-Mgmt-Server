@@ -13,8 +13,11 @@ connectMongo();
 
 const corsOptions = {
   origin: process.env.CORS_ORIGIN,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], 
+  allowedHeaders: ["Content-Type", "Authorization"], 
   credentials: true,
 };
+
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -125,3 +125,47 @@ exports.getEmployeeProfile = async (req, res) => {
     });
   }
 };
+
+exports.updateEmployeeProfile = async (req, res) => {
+  try {
+    const employeeId = req.params.id;
+    const updates = req.body;
+
+    const filteredUpdates = {
+      phone: updates.phone || undefined,
+      email: updates.email || undefined, // Only update if email is not empty
+    };
+       console.log(filteredUpdates);
+
+    if (String(req.user._id) !== String(employeeId)) {
+      return res.status(403).json({
+        success: false,
+        message: "You do not have permission to update this profile.",
+      });
+    }
+    console.log(updates);
+    const result = await Employee.findByIdAndUpdate(
+      employeeId,
+      { $set: filteredUpdates },
+      { new: true, runValidators: true } 
+    );
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Employee profile updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while updating the employee profile.",
+    });
+  }
+};
