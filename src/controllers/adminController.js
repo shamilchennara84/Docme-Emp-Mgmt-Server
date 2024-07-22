@@ -302,6 +302,11 @@ exports.createEmployee = async (req, res) => {
   try {
     const { location, designation, ...otherUpdates } = req.body;
 
+
+  const salt = await bcrypt.genSalt(10); 
+  const hashedPassword = await bcrypt.hash(otherUpdates.password, salt); 
+   otherUpdates.password = hashedPassword;
+
     const existingEmployee = await Employee.findOne({
       employeeId: otherUpdates.employeeId,
     });

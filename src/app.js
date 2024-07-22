@@ -1,6 +1,7 @@
 const express = require("express");
 const connectMongo = require("./config/mongoDB");
 const adminRoutes = require("./routes/adminRoutes");
+const employeeRoutes = require("./routes/employeeRoutes");
 const morgan = require("morgan");
 const passport = require("passport");
 const cors = require("cors");
@@ -24,7 +25,7 @@ app.use(cors(corsOptions));
 
 //routes
 app.use("/api/admin", adminRoutes);
-// app.use("/api/employee", employeeRoutes);
+app.use("/api/employee", employeeRoutes);
 
 app.use("/", (req, res) => {
   res.send("server is running");
